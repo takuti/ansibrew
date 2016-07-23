@@ -7,7 +7,12 @@ import subprocess
 @click.group(invoke_without_command=True)
 @click.pass_context
 def cli(ctx):
-    ctx.invoked_subcommand
+    if ctx.invoked_subcommand is None:
+        ctx.invoke(taps)
+        ctx.invoke(packages)
+        ctx.invoke(cask)
+    else:
+        ctx.invoked_subcommand
 
 
 @cli.command()
@@ -65,3 +70,6 @@ def cask():
     print('homebrew_cask_packages:')
     for p in packages:
         print('  - { name: %s }' % p)
+
+if __name__ == '__main__':
+    cli()
