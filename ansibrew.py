@@ -4,10 +4,12 @@ import yaml
 import click
 import subprocess
 
+
 @click.group(invoke_without_command=True)
 @click.pass_context
 def cli(ctx):
     ctx.invoked_subcommand
+
 
 @cli.command()
 def taps():
@@ -16,8 +18,9 @@ def taps():
     cmd = 'brew tap'
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     taps = p.communicate()[0].rstrip().split('\n')
-    var = { 'homebrew_taps': taps }
+    var = {'homebrew_taps': taps}
     print yaml.dump(var, default_flow_style=False)
+
 
 @cli.command()
 def packages():
@@ -35,14 +38,16 @@ def packages():
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         info = p.communicate()[0].rstrip().split('\n')
 
-        if '==> Dependencies' not in info: continue
+        if '==> Dependencies' not in info:
+            continue
         parsed_required = info[info.index('==> Dependencies') + 1].split(' ')
         excepted_packages += [parsed_required[i] for i in range(1, len(parsed_required), 2)]
 
-    var = { 'homebrew_packages': [] }
+    var = {'homebrew_packages': []}
     for package in set(packages).difference(set(excepted_packages)):
-        var['homebrew_packages'].append( {'name': package} )
+        var['homebrew_packages'].append({'name': package})
     print yaml.dump(var)
+
 
 @cli.command()
 def cask():
@@ -54,13 +59,14 @@ def cask():
     apps = p.communicate()[0].rstrip().split('\n')
 
     # search cask package one-by-one
-    var = { 'homebrew_cask_packages': [] }
+    var = {'homebrew_cask_packages': []}
     for app in apps:
         app = app.replace('.app', '')
         cmd = 'brew cask search "%s"' % app
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         res = p.communicate()[0].rstrip().split('\n')
 
-        if '==> Exact match' not in res: continue
-        var['homebrew_cask_packages'].append( {'name': res[res.index('==> Exact match') + 1]} )
+        if '==> Exact match' not in res:
+            continue
+        var['homebrew_cask_packages'].append({'name': res[res.index('==> Exact match') + 1]})
     print yaml.dump(var)
