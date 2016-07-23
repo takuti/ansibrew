@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import yaml
 import click
 import subprocess
 
@@ -16,9 +15,10 @@ def taps():
     cmd = 'brew tap'
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     taps = p.communicate()[0].rstrip().split('\n')
-    var = {'homebrew_taps': taps}
 
-    print(yaml.dump(var, default_flow_style=False))
+    print('homebrew_taps:')
+    for t in taps:
+        print('  - %s' % t)
 
 
 @cli.command()
@@ -39,11 +39,9 @@ def packages():
         parsed_required = info[info.index('==> Dependencies') + 1].split(' ')
         excepted_packages += [parsed_required[i] for i in range(1, len(parsed_required), 2)]
 
-    var = {'homebrew_packages': []}
-    for package in set(packages).difference(set(excepted_packages)):
-        var['homebrew_packages'].append({'name': package})
-
-    print(yaml.dump(var))
+    print('homebrew_packages:')
+    for p in packages:
+        print('  - { name: %s }' % p)
 
 
 @cli.command()
@@ -52,7 +50,7 @@ def cask():
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     apps = p.communicate()[0].rstrip().split('\n')
 
-    var = {'homebrew_cask_packages': []}
+    packages = []
     for app in apps:
         app = app.replace('.app', '')
         cmd = 'brew cask search "%s"' % app
@@ -62,6 +60,8 @@ def cask():
         if '==> Exact match' not in res:
             continue
 
-        var['homebrew_cask_packages'].append({'name': res[res.index('==> Exact match') + 1]})
+        packages.append(res[res.index('==> Exact match') + 1])
 
-    print(yaml.dump(var))
+    print('homebrew_cask_packages:')
+    for p in packages:
+        print('  - { name: %s }' % p)
