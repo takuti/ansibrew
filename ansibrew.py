@@ -76,7 +76,7 @@ def cask():
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     apps = p.communicate()[0].rstrip().split('\n')
 
-    packages = []
+    package_names = []
     for app in apps:
         app = app.replace('.app', '')
         cmd = 'brew cask search "%s"' % app
@@ -86,11 +86,11 @@ def cask():
         if '==> Exact match' not in res:
             continue
 
-        packages.append(res[res.index('==> Exact match') + 1])
+        package_names.append(res[res.index('==> Exact match') + 1])
 
     print('homebrew_cask_packages:')
-    for p in packages:
-        print('  - { name: %s }' % p)
+    for name in package_names:
+        print('  - { name: %s }' % name)
 
 if __name__ == '__main__':
     cli()
