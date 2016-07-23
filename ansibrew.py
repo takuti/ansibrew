@@ -19,7 +19,7 @@ def taps():
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     taps = p.communicate()[0].rstrip().split('\n')
     var = {'homebrew_taps': taps}
-    print yaml.dump(var, default_flow_style=False)
+    print(yaml.dump(var, default_flow_style=False))
 
 
 @cli.command()
@@ -46,7 +46,7 @@ def packages():
     var = {'homebrew_packages': []}
     for package in set(packages).difference(set(excepted_packages)):
         var['homebrew_packages'].append({'name': package})
-    print yaml.dump(var)
+    print(yaml.dump(var))
 
 
 @cli.command()
@@ -69,4 +69,4 @@ def cask():
         if '==> Exact match' not in res:
             continue
         var['homebrew_cask_packages'].append({'name': res[res.index('==> Exact match') + 1]})
-    print yaml.dump(var)
+    print(yaml.dump(var))
