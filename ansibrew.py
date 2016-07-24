@@ -2,6 +2,7 @@
 
 import click
 import subprocess
+import progressbar
 import json
 
 
@@ -36,7 +37,9 @@ def packages():
     installed_package_full_names = []
     depended_package_full_names = []
     options, names = {}, {}
-    for name in installed_package_names:
+
+    bar = progressbar.ProgressBar()
+    for name in bar(installed_package_names):
         cmd = 'brew info --json=v1 %s' % name
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         info = p.communicate()[0].decode('utf8').rstrip()
@@ -77,7 +80,9 @@ def cask():
     apps = p.communicate()[0].decode('utf8').rstrip().split('\n')
 
     package_names = []
-    for app in apps:
+
+    bar = progressbar.ProgressBar()
+    for app in bar(apps):
         app = app.replace('.app', '')
         cmd = 'brew cask search "%s"' % app
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
