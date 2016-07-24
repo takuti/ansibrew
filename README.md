@@ -11,6 +11,10 @@ $ pip install git+https://github.com/takuti/ansibrew.git
 
 ## Usage
 
+```
+$ absibrew > vars.yml
+```
+
 ### taps
 
 ```
@@ -25,6 +29,7 @@ $ ansibrew taps
 $ ansibrew packages
 ```
 
+- progress bar will be shown
 - `brew list`
 - except all required packages because they will be installed automatically as dependencies
 
@@ -34,6 +39,7 @@ $ ansibrew packages
 $ ansibrew cask
 ```
 
+- progress bar will be shown
 - search by `brew cask search` for all applications in */Applications* directory
 
 ## License
