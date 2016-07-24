@@ -20,7 +20,7 @@ def cli(ctx):
 def taps():
     cmd = 'brew tap'
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    taps = p.communicate()[0].rstrip().split('\n')
+    taps = p.communicate()[0].decode('utf8').rstrip().split('\n')
 
     print('homebrew_taps:')
     for t in taps:
@@ -31,7 +31,7 @@ def taps():
 def packages():
     cmd = 'brew list'
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    installed_package_names = p.communicate()[0].rstrip().split('\n')
+    installed_package_names = p.communicate()[0].decode('utf8').rstrip().split('\n')
 
     installed_package_full_names = []
     depended_package_full_names = []
@@ -39,7 +39,7 @@ def packages():
     for name in installed_package_names:
         cmd = 'brew info --json=v1 %s' % name
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        info = p.communicate()[0].rstrip()
+        info = p.communicate()[0].decode('utf8').rstrip()
 
         # there is no information for a package
         if len(info) == 0:
@@ -74,14 +74,14 @@ def packages():
 def cask():
     cmd = 'ls /Applications'
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    apps = p.communicate()[0].rstrip().split('\n')
+    apps = p.communicate()[0].decode('utf8').rstrip().split('\n')
 
     package_names = []
     for app in apps:
         app = app.replace('.app', '')
         cmd = 'brew cask search "%s"' % app
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        res = p.communicate()[0].rstrip().split('\n')
+        res = p.communicate()[0].decode('utf8').rstrip().split('\n')
 
         if '==> Exact match' not in res:
             continue
